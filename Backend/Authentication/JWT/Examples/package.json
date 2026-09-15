@@ -1,0 +1,17 @@
+{
+  "name": "jwt-runnable-examples",
+  "version": "1.0.0",
+  "description": "Production runnable examples for JWT signing, verification, tokenVersion revocation, and Redis blacklisting",
+  "main": "01-basic-jwt.js",
+  "scripts": {
+    "start:basic": "node 01-basic-jwt.js",
+    "start:version": "node 02-token-version.js",
+    "start:blacklist": "node 03-redis-blacklist.js"
+  },
+  "keywords": ["jwt", "authentication", "tokenVersion", "redis-blacklist"],
+  "author": "Krishna Gupta",
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  }
+}
