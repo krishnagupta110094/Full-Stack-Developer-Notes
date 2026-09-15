@@ -1,12 +1,13 @@
 {
-  "name": "password-hashing-examples",
+  "name": "password-authentication-examples",
   "version": "1.0.0",
-  "description": "Runnable code examples for Bcrypt hashing, salting, Mongoose hooks, and timing safe comparisons",
-  "main": "01-bcrypt-hashing-salting.js",
+  "description": "Production runnable examples for password hashing, registration, login, and change-password flows",
+  "main": "password-hashing.js",
   "scripts": {
-    "start:bcrypt": "node 01-bcrypt-hashing-salting.js",
-    "start:mongoose": "node 02-mongoose-presave-hook.js",
-    "start:timing": "node 03-timing-attack-safe-compare.js"
+    "start:hashing": "node password-hashing.js",
+    "start:register": "node register.js",
+    "start:login": "node login.js",
+    "start:change-password": "node change-password.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3"
