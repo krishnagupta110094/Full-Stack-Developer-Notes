@@ -1,14 +1,13 @@
 {
-  "name": "login-password-auth-examples",
+  "name": "authentication-architecture-examples",
   "version": "1.0.0",
-  "description": "Runnable code examples for Login & Password authentication, timing defense, and rate limiting",
-  "main": "01-login-controller.js",
+  "description": "Runnable code examples for stateful session authentication and stateless JWT token authentication",
+  "main": "session-auth.js",
   "scripts": {
-    "start:login": "node 01-login-controller.js",
-    "start:ratelimit": "node 02-rate-limiting-defense.js"
+    "start:session": "node session-auth.js",
+    "start:token": "node token-auth.js"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2"
   }
 }
