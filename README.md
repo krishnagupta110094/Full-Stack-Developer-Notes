@@ -24,11 +24,14 @@ Each concept includes:
 
 ### 🟢 1. Backend Engineering
 
-| Technology / Topic | Concept | Status | Notes | Code Examples | Interview Q&A |
+| Topic / Module | Concept | Status | Notes | Code Examples | Interview Q&A |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **Authentication** | **JWT (JSON Web Token)** | ✅ Completed | [Read Notes](Backend/Authentication/JWT/README.md) | [View Code](Backend/Authentication/JWT/Examples) | [Questions](Backend/Authentication/JWT/Interview-Questions.md) |
-| **Authentication** | Refresh Token Rotation | 📌 Planned | — | — | — |
-| **Authentication** | OAuth 2.0 & OpenID Connect | 📌 Planned | — | — | — |
+| **Authentication & Authorization** | **JWT (JSON Web Token)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/JWT/README.md) | [View Code](Backend/Authentication%20&%20Authorization/JWT/Examples) | [Questions](Backend/Authentication%20&%20Authorization/JWT/Interview-Questions.md) |
+| **Authentication & Authorization** | **Authentication (Login & Password)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/Authentication/README.md) | [View Code](Backend/Authentication%20&%20Authorization/Authentication/Examples) | [Questions](Backend/Authentication%20&%20Authorization/Authentication/Interview-Questions.md) |
+| **Authentication & Authorization** | **Authorization (Role-Based Access Control)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/Authorization/README.md) | [View Code](Backend/Authentication%20&%20Authorization/Authorization/Examples) | [Questions](Backend/Authentication%20&%20Authorization/Authorization/Interview-Questions.md) |
+| **Authentication & Authorization** | **Password Authentication (Hashing, Salt & Bcrypt)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/Password-Authentication/README.md) | [View Code](Backend/Authentication%20&%20Authorization/Password-Authentication/Examples) | [Questions](Backend/Authentication%20&%20Authorization/Password-Authentication/Interview-Questions.md) |
+| **Authentication & Authorization** | Refresh Token Rotation | 📌 Planned | — | — | — |
+| **Authentication & Authorization** | OAuth 2.0 & OpenID Connect | 📌 Planned | — | — | — |
 | **Node.js** | Event Loop & Worker Threads | 📌 Planned | — | — | — |
 | **Node.js** | Streams & Buffers | 📌 Planned | — | — | — |
 | **Express.js** | Middleware Pipeline | 📌 Planned | — | — | — |
@@ -70,26 +73,34 @@ Each concept includes:
 
 ## 🛠️ How to Run Examples
 
-Each concept directory containing an `Examples/` folder is self-contained. For example, to run the **JWT** examples:
+Each concept directory containing an `Examples/` folder is completely self-contained. For example:
 
 ```bash
-# Navigate to the concept's Examples folder
-cd Backend/Authentication/JWT/Examples
-
-# Install dependencies
+# 1. Test JWT Examples
+cd "Backend/Authentication & Authorization/JWT/Examples"
 npm install
-
-# Run individual examples
 node 01-basic-jwt.js
-node 02-token-version.js
-node 03-redis-blacklist.js
+
+# 2. Test Authentication (Login & Password)
+cd "../Authentication/Examples"
+npm install
+npm run start:login
+
+# 3. Test Authorization (RBAC)
+cd "../Authorization/Examples"
+npm run start:rbac
+
+# 4. Test Password Authentication (Bcrypt Hashing)
+cd "../Password-Authentication/Examples"
+npm install
+npm run start:bcrypt
 ```
 
 ---
 
-## 🤝 Contribution & Scalability
+## 🤝 Scalability & Architecture Contract
 
-This repository is designed to scale effortlessly across languages and platforms (Python, Go, Java, Spring Boot, AWS, Kubernetes, etc.) without altering the directory contract:
+This repository is designed to scale effortlessly across languages and stacks (Python, Go, Java, Spring Boot, etc.) while strictly respecting the 4-layer contract:
 
 ```text
 Category/

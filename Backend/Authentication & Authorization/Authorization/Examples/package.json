@@ -1,0 +1,10 @@
+{
+  "name": "rbac-authorization-examples",
+  "version": "1.0.0",
+  "description": "Runnable code examples for RBAC middleware, role hierarchies, and object-level authorization (IDOR/BOLA defense)",
+  "main": "01-rbac-middleware.js",
+  "scripts": {
+    "start:rbac": "node 01-rbac-middleware.js",
+    "start:object": "node 02-object-level-authorization.js"
+  }
+}

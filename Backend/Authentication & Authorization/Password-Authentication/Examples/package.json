@@ -1,0 +1,14 @@
+{
+  "name": "password-hashing-examples",
+  "version": "1.0.0",
+  "description": "Runnable code examples for Bcrypt hashing, salting, Mongoose hooks, and timing safe comparisons",
+  "main": "01-bcrypt-hashing-salting.js",
+  "scripts": {
+    "start:bcrypt": "node 01-bcrypt-hashing-salting.js",
+    "start:mongoose": "node 02-mongoose-presave-hook.js",
+    "start:timing": "node 03-timing-attack-safe-compare.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3"
+  }
+}

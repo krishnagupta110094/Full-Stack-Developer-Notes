@@ -1,0 +1,14 @@
+{
+  "name": "login-password-auth-examples",
+  "version": "1.0.0",
+  "description": "Runnable code examples for Login & Password authentication, timing defense, and rate limiting",
+  "main": "01-login-controller.js",
+  "scripts": {
+    "start:login": "node 01-login-controller.js",
+    "start:ratelimit": "node 02-rate-limiting-defense.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
