@@ -27,7 +27,7 @@ Each concept includes:
 | Topic / Module | Concept | Status | Notes | Code Examples | Interview Q&A |
 | :--- | :--- | :---: | :---: | :---: | :---: |
 | **Authentication & Authorization** | **JWT (JSON Web Token)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/JWT/README.md) | [View Code](Backend/Authentication%20&%20Authorization/JWT/Examples) | [Questions](Backend/Authentication%20&%20Authorization/JWT/Interview-Questions.md) |
-| **Authentication & Authorization** | **Authentication (Login & Password)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/Authentication/README.md) | [View Code](Backend/Authentication%20&%20Authorization/Authentication/Examples) | [Questions](Backend/Authentication%20&%20Authorization/Authentication/Interview-Questions.md) |
+| **Authentication & Authorization** | **Authentication** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/Authentication/README.md) | — | [Questions](Backend/Authentication%20&%20Authorization/Authentication/Interview-Questions.md) |
 | **Authentication & Authorization** | **Authorization (Role-Based Access Control)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/Authorization/README.md) | [View Code](Backend/Authentication%20&%20Authorization/Authorization/Examples) | [Questions](Backend/Authentication%20&%20Authorization/Authorization/Interview-Questions.md) |
 | **Authentication & Authorization** | **Password Authentication (Hashing, Salt & Bcrypt)** | ✅ Completed | [Read Notes](Backend/Authentication%20&%20Authorization/Password-Authentication/README.md) | [View Code](Backend/Authentication%20&%20Authorization/Password-Authentication/Examples) | [Questions](Backend/Authentication%20&%20Authorization/Password-Authentication/Interview-Questions.md) |
 | **Authentication & Authorization** | Refresh Token Rotation | 📌 Planned | — | — | — |
@@ -81,19 +81,14 @@ cd "Backend/Authentication & Authorization/JWT/Examples"
 npm install
 node 01-basic-jwt.js
 
-# 2. Test Authentication (Login & Password)
-cd "../Authentication/Examples"
-npm install
-npm run start:login
-
-# 3. Test Authorization (RBAC)
+# 2. Test Authorization (RBAC)
 cd "../Authorization/Examples"
 npm run start:rbac
 
-# 4. Test Password Authentication (Bcrypt Hashing)
+# 3. Test Password Authentication (Bcrypt Hashing)
 cd "../Password-Authentication/Examples"
 npm install
-npm run start:bcrypt
+npm run start:hashing
 ```
 
 ---
