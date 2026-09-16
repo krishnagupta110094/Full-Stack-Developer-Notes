@@ -354,27 +354,3 @@ Authenticated user requests an action ──► Server checks permissions/roles 
 
 * **Authentication:** Occurs first at login. (Failure code: `401 Unauthorized`).
 * **Authorization:** Occurs on every subsequent request to protected resources. (Failure code: `403 Forbidden`).
-
----
-
-## 13. Interview Masterclass: Structured Answers
-
-### Primary Question: *"How do you implement secure password authentication in a backend system?"*
-
-**Comprehensive Answer:**
-> *"In a secure backend implementation, password authentication begins at registration where I validate input formats and enforce password length and complexity. I never store plaintext passwords. I hash the password using a memory- or compute-hard Key Derivation Function like Bcrypt or Argon2id with a cost factor calibrated to ~250ms, relying on its CSPRNG salt generation to defeat rainbow tables. The database stores strictly the resulting hash.*  
->  
-> *During login, I locate the user by their normalized identifier and use `bcrypt.compare()` to verify the incoming plaintext password against the stored hash in constant time. If authentication fails, I consistently return a generic `401 Invalid credentials` to prevent account enumeration.*  
->  
-> *In production, password authentication also requires defense-in-depth: mandatory HTTPS to encrypt credentials in transit, sliding-window rate limiting to prevent brute-force attacks, and secure one-time opaque tokens for password resets."*
-
-### Key Cross-Questions & Crisp Answers:
-
-#### 1. "Why not use encryption instead of hashing for passwords?"
-> *"Because passwords only require verification, not recovery. Encryption is two-way and requires managing a decryption key; if that key is compromised, every stored password is exposed. Hashing is a one-way trapdoor function that verifies identity without ever exposing the original plaintext."*
-
-#### 2. "Why can't you compare passwords using `bcrypt.hash(input) === storedHash`?"
-> *"Because Bcrypt generates a brand-new random salt on every invocation. Hashing the exact same password again produces an entirely different hash string. Instead, `bcrypt.compare()` extracts the original salt directly from the stored hash and performs a constant-time comparison."*
-
-#### 3. "What is the difference between a Salt and a Pepper?"
-> *"A Salt is unique per user, generated via CSPRNG, and stored directly in the database alongside the hash to defeat rainbow tables. A Pepper is an application-wide secret key stored outside the database (in environment variables or a Key Management Service/HSM) appended to passwords before hashing. If the database alone is breached, attackers cannot crack hashes without the pepper."*
