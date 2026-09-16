@@ -14,25 +14,6 @@
 
 ## 2. Stateful Session-Based Architecture
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client
-    participant Server
-    participant SessionStore as Session Store (Redis / DB)
-
-    Client->>Server: POST /login (Credentials)
-    Server->>Server: Validate credentials
-    Server->>SessionStore: Store session { sessionId: "sess_abc123", userId: "usr_101" }
-    Server-->>Client: Set-Cookie: sid=sess_abc123; HttpOnly; Secure; SameSite=Strict
-    
-    Note over Client,Server: Subsequent Protected Requests
-    Client->>Server: GET /dashboard (Cookie: sid=sess_abc123)
-    Server->>SessionStore: Lookup "sess_abc123"
-    SessionStore-->>Server: Return session data (Active ✅)
-    Server-->>Client: 200 OK (User Data)
-```
-
 * **Session Management:** Upon successful login, the server generates a cryptographically secure, high-entropy **Session ID** and stores user session state on the server (in memory or an in-memory cache like Redis).
 * **Secure Cookie Transport:** The Session ID is transmitted to the client inside an HTTP cookie configured with:
   * `HttpOnly`: Prevents client-side JavaScript from accessing the cookie, mitigating Cross-Site Scripting (XSS) token theft.
@@ -43,23 +24,6 @@ sequenceDiagram
 ---
 
 ## 3. Stateless Token-Based Architecture (JWT)
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client
-    participant AuthServer as Auth Service
-    participant ResourceServer as Microservice A
-
-    Client->>AuthServer: POST /login (Credentials)
-    AuthServer->>AuthServer: Validate & Sign JWT with Private/Secret Key
-    AuthServer-->>Client: Access Token (15m) + Refresh Token (7d)
-    
-    Note over Client,ResourceServer: Microservice API Request
-    Client->>ResourceServer: GET /orders (Bearer <AccessToken>)
-    ResourceServer->>ResourceServer: Verify cryptographic signature locally (Zero DB calls)
-    ResourceServer-->>Client: 200 OK (Orders Data)
-```
 
 * **Anatomy of a JWT:** A JSON Web Token consists of three parts separated by dots:
   $$\text{Header} \ . \ \text{Payload (Claims)} \ . \ \text{Signature}$$
