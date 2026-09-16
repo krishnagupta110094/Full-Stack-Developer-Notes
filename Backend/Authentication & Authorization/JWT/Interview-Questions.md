@@ -70,16 +70,6 @@ Since JWTs are stateless, the server doesn't keep active session records. To inv
 
 ---
 
-### Q8: What is the Algorithm "None" vulnerability in JWT?
-**Answer:**  
-Early versions of some JWT libraries supported `"alg": "none"`, meaning unsigned tokens. Attackers could take a valid token, modify the payload (e.g., `"role": "admin"`), change `"alg"` to `"none"`, strip the signature, and the vulnerable server would accept it as valid!  
-**Mitigation:** Always enforce strict algorithm whitelisting on verification:
-```javascript
-jwt.verify(token, secret, { algorithms: ['HS256', 'RS256'] });
-```
-
----
-
 ## 🔄 4. Cross-Questions (Interviewer Deep-Dives)
 
 ### Cross-Q1: *"If you use `tokenVersion` or query Redis on every request, doesn't that defeat the purpose of JWT being stateless?"*
@@ -98,37 +88,6 @@ jwt.verify(token, secret, { algorithms: ['HS256', 'RS256'] });
 
 ## 🧠 5. Tricky Interview Questions
 
-### Q9: Can two users have the exact same JWT?
+### Q8: Can two users have the exact same JWT?
 **Answer:**  
 Only if their payload, header, signing secret, and exact timestamp (`iat`) are 100% identical down to the second. In real-world setups, different user IDs or timestamps make every JWT unique.
-
----
-
-### Q10: What happens if a server's clock drifts (is out of sync) by 5 minutes?
-**Answer:**  
-JWT verification checks `exp` (expiration) and `nbf` (not before). If the server clock drifts ahead or behind, valid tokens may be rejected prematurely as `TokenExpiredError`, or newly issued tokens may be rejected with `NotBeforeError`.  
-**Solution:** Production JWT libraries provide a `clockTolerance` option:
-```javascript
-jwt.verify(token, secret, { clockTolerance: 30 }); // 30 seconds buffer
-```
-
----
-
-## 🏢 6. Real-World Scenario-Based Questions
-
-### Scenario 1: Re-login without logout (Single Session Enforcement)
-> **Question:** *"Admin logs in from Chrome on a laptop. Then Admin logs in from Safari on an iPhone. We want the laptop session to be terminated immediately. How do you design this?"*
-
-**Answer:**  
-1. **Using `tokenVersion`:** On the new login from Safari, the backend increments `user.tokenVersion` in the DB. The iPhone gets a token with the new version. When the laptop sends a request with the old token, `decoded.tokenVersion` does not match the database version, resulting in an instant `401 Unauthorized`.
-2. **Using Redis Active Session:** The backend stores `active_session:<userId> = <currentTokenId>` in Redis. On new login, the old session ID is replaced. Middleware checks if incoming `jti` (JWT ID) matches the active ID in Redis.
-
----
-
-### Scenario 2: Global Emergency Revocation (Account Compromise)
-> **Question:** *"A company employee's laptop is stolen. They have valid tokens on 5 different devices. How does an admin terminate all sessions across all devices instantly?"*
-
-**Answer:**  
-1. Update `user.tokenVersion += 1` or set `user.passwordChangedAt = Date.now()`.
-2. Delete all refresh tokens associated with that `userId` in the DB.
-3. In the JWT middleware, check if `decoded.iat < user.passwordChangedAt.getTime() / 1000`. Any token issued prior to the reset timestamp is automatically rejected across all devices.
