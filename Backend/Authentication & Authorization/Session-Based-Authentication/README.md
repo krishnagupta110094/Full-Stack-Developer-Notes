@@ -82,36 +82,38 @@ HTTP is stateless. When a user logs in successfully, the server must recognize t
 
 ## 5. Complete Session Authentication Flow
 
-```text
-                 LOGIN
-                   ↓
-           Email + Password
-                   ↓
-            Server verifies
-                   ↓
-            Create Session
-                   ↓
-          Generate Session ID
-                   ↓
-        Store Session on Server
-                   ↓
-       Send Session ID to Client
-                   ↓
-              Browser
-                   ↓
-        Store Session ID in Cookie
-                   ↓
-          Future API Request
-                   ↓
-       Browser sends Cookie
-                   ↓
-        Server receives Session ID
-                   ↓
-        Find Session in Session Store
-                   ↓
-              Find User
-                   ↓
-          Allow Protected Request
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as 📱 Browser / Client
+    participant Server as 🖥️ Express Backend
+    participant Store as 🗄️ Session Store (Redis / DB)
+
+    rect rgb(240, 248, 255)
+    Note over Client,Store: 1. Login & Session Creation
+    Client->>Server: POST /login (email, password)
+    Server->>Server: Verify credentials
+    Server->>Server: Generate Session ID (abc123)
+    Server->>Store: Store session data: abc123 -> User 101
+    Store-->>Server: Saved successfully
+    Server-->>Client: Set-Cookie: connect.sid=abc123
+    end
+
+    rect rgb(245, 255, 250)
+    Note over Client,Store: 2. Subsequent Authenticated Request
+    Client->>Server: GET /profile (Cookie: connect.sid=abc123)
+    Server->>Store: Lookup Session ID "abc123"
+    Store-->>Server: Session found: User 101
+    Server-->>Client: 200 OK (Profile Data)
+    end
+
+    rect rgb(255, 240, 245)
+    Note over Client,Store: 3. Session Destruction (Logout)
+    Client->>Server: POST /logout
+    Server->>Store: Destroy session "abc123"
+    Store-->>Server: Session deleted
+    Server-->>Client: Clear-Cookie: connect.sid
+    end
 ```
 
 ---
@@ -410,30 +412,47 @@ cookie: {
 
 ---
 
-## 21. Complete Mental Model
+## 21. Complete Mental Model (Architecture Map)
 
-```text
-USER
- ↓
-Login
- ↓
-Server verifies credentials
- ↓
-Create Session
- ↓
-Generate Session ID
- ↓
-Session Store [ abc123 → User 101 ]
- ↓
-Session ID sent in Cookie
- ↓
-Browser
- ↓
-Future Request (Cookie with Session ID)
- ↓
-Server looks up Session Store
- ↓
-Find User
- ↓
-Allow Request
+```mermaid
+flowchart TD
+    classDef startNode fill:#4F46E5,stroke:#3730A3,stroke-width:2px,color:#fff;
+    classDef sessionNode fill:#0EA5E9,stroke:#0284C7,stroke-width:2px,color:#fff;
+    classDef successNode fill:#10B981,stroke:#059669,stroke-width:2px,color:#fff;
+    classDef warningNode fill:#F59E0B,stroke:#D97706,stroke-width:2px,color:#fff;
+    classDef dangerNode fill:#EF4444,stroke:#DC2626,stroke-width:2px,color:#fff;
+
+    Login["🔐 User Logs In<br/>(Email + Password)"]:::startNode
+    VerifyCredentials{"Server Verifies<br/>Credentials"}
+    
+    CreateSession["🎟️ Create Session Record<br/>Generate Session ID"]:::sessionNode
+    SaveStore[("🗄️ Save in Session Store<br/>abc123 ➔ User 101")]:::sessionNode
+    
+    SendCookie["🍪 Send Session ID to Browser<br/>Set-Cookie: connect.sid=abc123"]:::sessionNode
+    
+    SubsequentReq["🌐 Future Request to Protected API<br/>Cookie automatically attached"]
+    LookupStore{"Server Looks Up<br/>Session Store"}
+    
+    AccessGranted["✅ Session Valid<br/>Return Protected Resource"]:::successNode
+    AccessDenied["❌ Session Invalid / Expired<br/>401 Unauthorized"]:::dangerNode
+    
+    LogoutReq["🚪 User Requests Logout<br/>POST /logout"]:::warningNode
+    DestroySession["🗑️ Destroy Session in Store<br/>& Clear Cookie"]:::dangerNode
+
+    Login --> VerifyCredentials
+    VerifyCredentials -->|Valid| CreateSession
+    VerifyCredentials -->|Invalid| AccessDenied
+    
+    CreateSession --> SaveStore
+    SaveStore --> SendCookie
+    
+    SendCookie --> SubsequentReq
+    SubsequentReq --> LookupStore
+    
+    LookupStore -->|Found & Active| AccessGranted
+    LookupStore -->|Not Found / Expired| AccessDenied
+    
+    AccessGranted -.-> LogoutReq
+    LogoutReq --> DestroySession
+    DestroySession --> AccessDenied
 ```
