@@ -9,7 +9,7 @@
 ### Definition
 An **Access Token** is a short-lived token used by a client to access **protected resources/APIs** after successful authentication.
 
-> **Simple words:** Access Token proves to the server that the user is authenticated and permitted to access protected APIs.
+> **Simple words:** An Access Token proves to the server that the user is authenticated and permitted to access protected APIs.
 
 ### Example Flow
 ```text
@@ -83,75 +83,103 @@ POST /api/auth/refresh
 
 ---
 
-## 4. Lifecycle Example
+## 4. End-to-End Sequence Diagram (Full Lifecycle)
 
-Suppose:
-```text
-Access Token  → 15 minutes
-Refresh Token → 7 days
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as 📱 Client (App / Browser)
+    participant Server as 🖥️ Express Backend
+    participant DB as 🗄️ MongoDB
+
+    rect rgb(240, 248, 255)
+    Note over Client,DB: 1. Initial Login & Dual-Token Issuance
+    Client->>Server: POST /api/auth/login (email, password)
+    Server->>DB: User.findOne({ email })
+    DB-->>Server: User record found
+    Server->>Server: Verify password with bcrypt.compare()
+    Server->>Server: Generate Access Token (15m) & Refresh Token (7d)
+    Server->>DB: Save refreshToken in user document
+    DB-->>Server: Saved successfully
+    Server-->>Client: 200 OK (accessToken, refreshToken)
+    end
+
+    rect rgb(245, 255, 250)
+    Note over Client,DB: 2. Normal Authenticated Requests
+    Client->>Server: GET /api/users/me (Bearer AccessToken)
+    Server->>Server: jwt.verify(accessToken, ACCESS_SECRET)
+    Server-->>Client: 200 OK (User Data)
+    end
+
+    rect rgb(255, 250, 240)
+    Note over Client,DB: 3. Token Expiration & Silent Refresh
+    Client->>Server: GET /api/users/me (Expired AccessToken)
+    Server->>Server: jwt.verify fails (TokenExpiredError)
+    Server-->>Client: 401 Unauthorized (Access token expired)
+    Client->>Server: POST /api/auth/refresh (refreshToken)
+    Server->>Server: jwt.verify(refreshToken, REFRESH_SECRET)
+    Server->>DB: User.findById(decoded.userId)
+    DB-->>Server: User found & compare refreshToken
+    Server->>Server: Generate NEW Access Token (15m)
+    Server-->>Client: 200 OK (new accessToken)
+    Client->>Server: GET /api/users/me (Bearer NEW AccessToken)
+    Server-->>Client: 200 OK (User Data)
+    end
+
+    rect rgb(255, 240, 245)
+    Note over Client,DB: 4. Logout / Invalidation
+    Client->>Server: POST /api/auth/logout (refreshToken)
+    Server->>DB: Set user.refreshToken = null
+    DB-->>Server: Updated
+    Server-->>Client: 200 OK (Logout successful)
+    end
 ```
-
-1. **User Login:**
-   ```text
-   Email + Password
-          ↓
-   Server verifies credentials
-          ↓
-   Server issues: Access Token + Refresh Token
-   ```
-
-2. **Normal API Requests:**
-   ```text
-   Access Token
-        ↓
-   Protected API
-        ↓
-   200 OK Response
-   ```
-
-3. **After 15 Minutes (Access Token Expired):**
-   ```text
-   Access Token expired
-          ↓
-   API request fails (401 Unauthorized)
-          ↓
-   Client sends Refresh Token to /api/auth/refresh
-          ↓
-   Server verifies Refresh Token
-          ↓
-   Server issues New Access Token
-          ↓
-   API request continues seamlessly
-   ```
-
-4. **After 7 Days (Refresh Token Expired / Revoked):**
-   ```text
-   Refresh Token expires
-          ↓
-   User must log in again with Email & Password
-   ```
 
 ---
 
-## 5. Complete Authentication Flow
+## 5. Complete Authentication Flow (Architecture Map)
 
-```text
-                LOGIN
-                  ↓
-          Email + Password
-                  ↓
-             Verification
-                  ↓
-       ┌──────────┴──────────┐
-       ↓                     ↓
- Access Token          Refresh Token
- (Short-lived)         (Long-lived)
-       ↓                     ↓
- Protected APIs        New Access Token
-       ↓                     ↓
-    Expires ←──────── Refresh Request
-                             ↓
-                       New Access Token
+```mermaid
+flowchart TD
+    classDef startNode fill:#4F46E5,stroke:#3730A3,stroke-width:2px,color:#fff;
+    classDef tokenNode fill:#0EA5E9,stroke:#0284C7,stroke-width:2px,color:#fff;
+    classDef successNode fill:#10B981,stroke:#059669,stroke-width:2px,color:#fff;
+    classDef warningNode fill:#F59E0B,stroke:#D97706,stroke-width:2px,color:#fff;
+    classDef dangerNode fill:#EF4444,stroke:#DC2626,stroke-width:2px,color:#fff;
+
+    Login["🔐 User Submits Credentials<br/>(Email + Password)"]:::startNode
+    Verify{"Server Verifies<br/>Password"}
+    
+    IssueAccess["⚡ Access Token<br/>(Short-lived: 15 mins)"]:::tokenNode
+    IssueRefresh["🔄 Refresh Token<br/>(Long-lived: 7 days)"]:::tokenNode
+    
+    ApiCall["📡 Access Protected API<br/>(Authorization: Bearer Token)"]
+    TokenCheck{"Access Token<br/>Valid?"}
+    
+    Success["✅ 200 OK Response<br/>(Resource Delivered)"]:::successNode
+    Expired["⚠️ 401 Unauthorized<br/>(Token Expired)"]:::warningNode
+    
+    RefreshEndpoint["🔁 Call POST /api/auth/refresh<br/>(Send Refresh Token)"]
+    RefreshCheck{"Refresh Token<br/>Valid in DB?"}
+    
+    NewAccessToken["✨ Issue New Access Token<br/>(15 mins)"]:::successNode
+    ReLogin["❌ Must Log In Again<br/>(Session Terminated)"]:::dangerNode
+
+    Login --> Verify
+    Verify -->|Password Matched| IssueAccess
+    Verify -->|Password Matched| IssueRefresh
+    
+    IssueAccess --> ApiCall
+    ApiCall --> TokenCheck
+    TokenCheck -->|Yes| Success
+    TokenCheck -->|No / Expired| Expired
+    
+    Expired --> RefreshEndpoint
+    IssueRefresh -.-> RefreshEndpoint
+    RefreshEndpoint --> RefreshCheck
+    RefreshCheck -->|Valid| NewAccessToken
+    RefreshCheck -->|Expired / Revoked| ReLogin
+    NewAccessToken --> ApiCall
 ```
 
 ---
