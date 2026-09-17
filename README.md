@@ -31,7 +31,7 @@ Each completed module includes:
 | **Day 05** | Built-In Node.js Modules | 📌 Planned | — | — | — |
 | **Day 06** | Advanced Node.js Streams & Buffers | 📌 Planned | — | — | — |
 | **Day 07** | Node.js Concurrency & Multi-threading | 📌 Planned | — | — | — |
-| **Day 08** | Express.js Architecture & Routing | 📌 Planned | — | — | — |
+| **Day 08** | **Express.js Architecture & Routing** | ✅ Completed | [Read Notes](Backend/Day-08-Express.js-Architecture-and-Routing/README.md) | [View Code](Backend/Day-08-Express.js-Architecture-and-Routing/Examples) | [Questions](Backend/Day-08-Express.js-Architecture-and-Routing/Interview-Questions.md) |
 | **Day 09** | Request Validation & Runtime Type Checking | 📌 Planned | — | — | — |
 | **Day 10** | Global Error Handling & Custom Errors | 📌 Planned | — | — | — |
 | **Day 11** | REST API Design Principles | 📌 Planned | — | — | — |
@@ -77,23 +77,30 @@ Each completed module includes:
 Each concept directory containing an `Examples/` folder is completely self-contained. For example:
 
 ```bash
-# 1. Day 19: Password Hashing & Salt
-cd "Backend/Day-19-Password-Hashing-and-Salt/Examples"
+# 1. Day 08: Express.js Architecture & Routing
+cd "Backend/Day-08-Express.js-Architecture-and-Routing/Examples"
+npm install
+npm run start:lifecycle  # Test request-response lifecycle & error handling
+npm run start:pipeline   # Test middleware chaining & auth guard
+npm run start:modular    # Test modular routes (/users, /products)
+
+# 2. Day 19: Password Hashing & Salt
+cd "../../Day-19-Password-Hashing-and-Salt/Examples"
 npm install
 npm run start:hashing
 
-# 2. Day 20: JWT Authentication Deep Dive
-cd "Backend/Day-20-JWT-Authentication-Deep-Dive/Examples"
+# 3. Day 20: JWT Authentication Deep Dive
+cd "../../Day-20-JWT-Authentication-Deep-Dive/Examples"
 npm install
 npm run start:basic
 
-# 3. Day 21: Access Tokens & Refresh Tokens
-cd "Backend/Day-21-Refresh-Tokens-and-Session-Management/Examples/01-access-refresh-tokens"
+# 4. Day 21: Access Tokens & Refresh Tokens
+cd "../../Day-21-Refresh-Tokens-and-Session-Management/Examples/01-access-refresh-tokens"
 npm install
 npm start
 
-# 4. Day 22: Authorization (RBAC) & Security Workflows
-cd "Backend/Day-22-Authorization-and-RBAC/Examples"
+# 5. Day 22: Authorization (RBAC) & Security Workflows
+cd "../../../Day-22-Authorization-and-RBAC/Examples"
 npm install
 npm run start:rbac
 ```

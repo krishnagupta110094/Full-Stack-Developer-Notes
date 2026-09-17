@@ -1,0 +1,17 @@
+{
+  "name": "day-08-express-architecture-and-routing",
+  "version": "1.0.0",
+  "description": "Runnable examples for Day 08 - Express.js Architecture, Middleware Pipeline, and Modular Routing",
+  "main": "01-request-lifecycle.js",
+  "scripts": {
+    "start:lifecycle": "node 01-request-lifecycle.js",
+    "start:pipeline": "node 02-middleware-pipeline.js",
+    "start:modular": "node 03-modular-routing/server.js"
+  },
+  "keywords": ["express", "middleware", "routing", "lifecycle"],
+  "author": "Krishna Gupta",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
